@@ -5,6 +5,7 @@ import { IOConnectContext } from '@interopio/react-hooks';
 function App() {
   const io = React.useContext(IOConnectContext);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).io = io;
 
   return (
