@@ -166,7 +166,11 @@ export const ExecutionsBlotter = () => {
   const exportToExcel = async () => {
     const columnConfig = columnDefs.map(({ field, headerName }) => {
       if (!headerName || !field) return;
-      return { header: headerName, fieldName: field };
+      return {
+        header: headerName,
+        fieldName: field,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any;
     });
 
     const data = adaptableApiRef.current?.gridApi.getGridData();
@@ -185,7 +189,10 @@ export const ExecutionsBlotter = () => {
 
     io.excel
       .openSheet(config)
-      .then((sheet) => console.log(`Sent data to Excel sheet ${sheet.name}`));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((sheet: { name: any }) =>
+        console.log(`Sent data to Excel sheet ${sheet.name}`),
+      );
   };
 
   return (
