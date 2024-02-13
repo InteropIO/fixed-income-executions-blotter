@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5552,
+    port: 5553,
   },
-  base: '/interopio/axes-blotter',
+  base: '/interopio/executions-blotter',
 });

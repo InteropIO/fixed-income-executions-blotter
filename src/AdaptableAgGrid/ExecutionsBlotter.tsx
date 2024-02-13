@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useMemo } from 'react';
 import { Root } from 'react-dom/client';
@@ -169,7 +170,6 @@ export const ExecutionsBlotter = () => {
       return {
         header: headerName,
         fieldName: field,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
     });
 
@@ -189,7 +189,6 @@ export const ExecutionsBlotter = () => {
 
     io.excel
       .openSheet(config)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((sheet: { name: any }) =>
         console.log(`Sent data to Excel sheet ${sheet.name}`),
       );
