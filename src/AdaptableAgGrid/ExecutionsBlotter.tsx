@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Root } from 'react-dom/client';
 import { GridOptions } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -19,6 +19,7 @@ import '@interopio/theme-demo-apps/dist/io.applications.css';
 import Glue4Office, { Glue42Office } from '@glue42/office';
 import { Context, Trade } from '@finos/fdc3';
 import ExcelButton from './ExcelButton';
+import { useIOConnect } from '@interopio/react-hooks';
 
 interface TradeExtended extends Trade {
   details: {
@@ -47,7 +48,6 @@ export const ExecutionsBlotter = () => {
       columnDefs,
       rowData,
       sideBar: true,
-
       suppressMenuHide: true,
       enableRangeSelection: true,
       enableCharts: true,
@@ -163,6 +163,55 @@ export const ExecutionsBlotter = () => {
   );
 
   const adaptableApiRef = React.useRef<AdaptableApi>();
+
+  const ORDERID_CONTEXT = 'ORDERID_CONTEXT';
+
+  useEffect(() => {
+    async function setMyWorkspaceId() {
+      const inWsp = await (window as any).io.workspaces?.inWorkspace();
+      if (!inWsp) {
+        return;
+      }
+
+      const myWorkspace = await (window as any).io.workspaces?.getMyWorkspace();
+      await (window as any).io.windows.my().updateContext({
+        workspaceId: myWorkspace?.id,
+      });
+    }
+
+    setMyWorkspaceId();
+  }, []);
+
+  useIOConnect(async (io) => {
+    const workspaceId = (await io.windows.my().getContext()).workspaceId;
+
+    const workspace =
+      (await io.workspaces?.getAllWorkspaces())?.find(
+        ({ id }) => id === workspaceId,
+      ) || (await io.workspaces?.getMyWorkspace());
+    if (!workspace) return;
+
+    return workspace.onContextUpdated((context: any) => {
+      const adaptableApi = adaptableApiRef.current;
+
+      if (adaptableApi) {
+        if (ORDERID_CONTEXT in context) {
+          const orderValue = context[ORDERID_CONTEXT].id?.OrderID;
+          const orderIdFilter: ColumnFilter = {
+            ColumnId: 'OrderID',
+            Predicate: {
+              PredicateId: 'Is',
+              Inputs: [orderValue],
+            },
+          };
+          adaptableApi.filterApi.setColumnFilters([orderIdFilter]);
+        } else {
+          // TODO - investigate and remove
+          adaptableApi.filterApi.clearColumnFilters();
+        }
+      }
+    });
+  });
 
   const exportToExcel = async () => {
     const columnConfig = columnDefs.map(({ field, headerName }) => {
