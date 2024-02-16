@@ -62,6 +62,9 @@ export const ExecutionsBlotter = () => {
       primaryKey: 'TradeID',
       userName: 'Test User',
       adaptableId: 'AdaptableFinsembleAxes',
+      filterOptions: {
+        clearFiltersOnStartUp: true,
+      },
       fdc3Options: {
         enableLogging: true,
         intents: {
@@ -194,21 +197,16 @@ export const ExecutionsBlotter = () => {
     return workspace.onContextUpdated((context: any) => {
       const adaptableApi = adaptableApiRef.current;
 
-      if (adaptableApi) {
-        if (ORDERID_CONTEXT in context) {
-          const orderValue = context[ORDERID_CONTEXT].id?.OrderID;
-          const orderIdFilter: ColumnFilter = {
-            ColumnId: 'OrderID',
-            Predicate: {
-              PredicateId: 'Is',
-              Inputs: [orderValue],
-            },
-          };
-          adaptableApi.filterApi.setColumnFilters([orderIdFilter]);
-        } else {
-          // TODO - investigate and remove
-          adaptableApi.filterApi.clearColumnFilters();
-        }
+      if (ORDERID_CONTEXT in context && adaptableApi) {
+        const orderValue = context[ORDERID_CONTEXT].id?.OrderID;
+        const orderIdFilter: ColumnFilter = {
+          ColumnId: 'OrderID',
+          Predicate: {
+            PredicateId: 'Is',
+            Inputs: [orderValue],
+          },
+        };
+        adaptableApi.filterApi.setColumnFilters([orderIdFilter]);
       }
     });
   });
