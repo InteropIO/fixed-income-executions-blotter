@@ -104,7 +104,7 @@ export const ExecutionsBlotter = () => {
               };
 
               adaptableApi.gridApi.highlightRow(rowHighlightInfo);
-              
+
               // TODO: update order blotter status
             }
           },
@@ -124,7 +124,7 @@ export const ExecutionsBlotter = () => {
                 Inputs: [isinValue],
               },
             };
-                        adaptableApi.filterApi.setColumnFilters([isinFilter]);
+            adaptableApi.filterApi.setColumnFilters([isinFilter]);
           },
         },
       },
@@ -197,21 +197,16 @@ export const ExecutionsBlotter = () => {
     return workspace.onContextUpdated((context: any) => {
       const adaptableApi = adaptableApiRef.current;
 
-      if (adaptableApi) {
-        if (ORDERID_CONTEXT in context) {
-          const orderValue = context[ORDERID_CONTEXT].id?.OrderID;
-          const orderIdFilter: ColumnFilter = {
-            ColumnId: 'OrderID',
-            Predicate: {
-              PredicateId: 'Is',
-              Inputs: [orderValue],
-            },
-          };
-          adaptableApi.filterApi.setColumnFilters([orderIdFilter]);
-                  } else {
-          // TODO - investigate and remove
-          adaptableApi.filterApi.clearColumnFilters();
-        }
+      if (ORDERID_CONTEXT in context && adaptableApi) {
+        const orderValue = context[ORDERID_CONTEXT].id?.OrderID;
+        const orderIdFilter: ColumnFilter = {
+          ColumnId: 'OrderID',
+          Predicate: {
+            PredicateId: 'Is',
+            Inputs: [orderValue],
+          },
+        };
+        adaptableApi.filterApi.setColumnFilters([orderIdFilter]);
       }
     });
   });
@@ -246,7 +241,7 @@ export const ExecutionsBlotter = () => {
       );
   };
 
-    return (
+  return (
     <div
       className={'flex h-screen flex-col'}
       style={
@@ -272,7 +267,7 @@ export const ExecutionsBlotter = () => {
         }
         onAdaptableReady={({ adaptableApi }) => {
           adaptableApiRef.current = adaptableApi;
-                  }}
+        }}
       />
       <div className="ag-tick42 flex-1">
         <AgGridReact gridOptions={gridOptions} modules={agGridModules} />
