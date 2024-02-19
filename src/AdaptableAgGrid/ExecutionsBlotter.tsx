@@ -8,7 +8,6 @@ import AdaptableReact, {
   AdaptableApi,
   AdaptableOptions,
   ColumnFilter,
-  HandleFdc3Context,
   RowHighlightInfo,
 } from '@adaptabletools/adaptable-react-aggrid';
 import { columnDefs, defaultColDef } from './columnDefs';
@@ -16,7 +15,6 @@ import { rowData, ExecutionData } from './rowData';
 import { agGridModules } from './agGridModules';
 import { renderReactRoot } from '../react-18-utils';
 import '@interopio/theme-demo-apps/dist/io.applications.css';
-import Glue4Office, { Glue42Office } from '@glue42/office';
 import { Context, Trade } from '@finos/fdc3';
 import ExcelButton from './ExcelButton';
 import { useIOConnect } from '@interopio/react-hooks';
@@ -61,7 +59,7 @@ export const ExecutionsBlotter = () => {
         'AppName=interop-Trial|Owner=interop|StartDate=2023-11-23|EndDate=2024-01-23|Ref=AdaptableLicense|Trial=true|TS=1700741032831|C=2692006938,2271485454,4261170317,1260976079,180944542,4061129120,1409499958,3452034758',
       primaryKey: 'TradeID',
       userName: 'Test User',
-      adaptableId: 'AdaptableFinsembleAxes',
+      adaptableId: 'AdaptableAxesBlotter',
       filterOptions: {
         clearFiltersOnStartUp: true,
       },
@@ -107,24 +105,6 @@ export const ExecutionsBlotter = () => {
 
               // TODO: update order blotter status
             }
-          },
-        },
-        contexts: {
-          listensFor: ['fdc3.instrument'],
-          handleContext: (params: HandleFdc3Context) => {
-            const { adaptableApi, context } = params;
-            if (context.type !== 'fdc3.instrument') {
-              return;
-            }
-            const isinValue = context.id?.ISIN;
-            const isinFilter: ColumnFilter = {
-              ColumnId: 'ISIN',
-              Predicate: {
-                PredicateId: 'Is',
-                Inputs: [isinValue],
-              },
-            };
-            adaptableApi.filterApi.setColumnFilters([isinFilter]);
           },
         },
       },
@@ -211,34 +191,20 @@ export const ExecutionsBlotter = () => {
     });
   });
 
-  const exportToExcel = async () => {
-    const columnConfig = columnDefs.map(({ field, headerName }) => {
-      if (!headerName || !field) return;
-      return {
-        header: headerName,
-        fieldName: field,
-      } as any;
-    });
+  const exportToExcel = () => {
+    const cols = adaptableApiRef.current?.columnApi.getColumns();
+    const rows = adaptableApiRef.current?.gridApi
+      .getAllRowNodes()
+      .map((row) => row.data);
 
-    const data = adaptableApiRef.current?.gridApi.getGridData();
-
-    const io = (window as any).io;
-
-    if (!io.excel) {
-      await Glue4Office({ excel: true, glue: io });
+    if (!rows || !cols) {
+      return;
     }
 
-    const config: Glue42Office.Excel.OpenSheetConfig = {
-      columnConfig,
-      data,
-      options: {},
-    };
-
-    io.excel
-      .openSheet(config)
-      .then((sheet: { name: any }) =>
-        console.log(`Sent data to Excel sheet ${sheet.name}`),
-      );
+    adaptableApiRef.current?.exportApi.exportDataToExcel(
+      { columns: cols, rows },
+      'Executions data',
+    );
   };
 
   return (
@@ -251,10 +217,10 @@ export const ExecutionsBlotter = () => {
       }
     >
       <button
-        id="excel-export--button"
+        id="excel-export-button"
         title="Export to Excel"
         type="button"
-        onClick={() => exportToExcel()}
+        onClick={exportToExcel}
       >
         <ExcelButton />
       </button>
