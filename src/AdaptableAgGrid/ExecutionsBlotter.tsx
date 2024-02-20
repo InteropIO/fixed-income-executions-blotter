@@ -56,7 +56,7 @@ export const ExecutionsBlotter = () => {
     () => ({
       // licenseKey: import.meta.env.VITE_ADAPTABLE_LICENSE_KEY,
       licenseKey:
-        'AppName=interop-Trial|Owner=interop|StartDate=2023-11-23|EndDate=2024-01-23|Ref=AdaptableLicense|Trial=true|TS=1700741032831|C=2692006938,2271485454,4261170317,1260976079,180944542,4061129120,1409499958,3452034758',
+        'AppName=Interop-Universal|Owner=Interop|StartDate=2024-02-19|EndDate=2024-08-19|Ref=AdaptableLicense|TS=1708358445822|C=3338536950,2753137919,1260976079,3157789641,3548769197,2612951722,1814935034',
       primaryKey: 'TradeID',
       userName: 'Test User',
       adaptableId: 'AdaptableAxesBlotter',
