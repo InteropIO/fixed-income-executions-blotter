@@ -62,51 +62,6 @@ export const ExecutionsBlotter = () => {
       filterOptions: {
         clearFiltersOnStartUp: true,
       },
-      fdc3Options: {
-        enableLogging: true,
-        intents: {
-          listensFor: ['CreateTrade'],
-          handleIntent: async ({
-            adaptableApi,
-            context,
-            intent,
-          }: {
-            adaptableApi: AdaptableApi;
-            context: Context;
-            intent: string;
-          }) => {
-            if (intent === 'CreateTrade') {
-              const trade = context as TradeExtended;
-              const { details } = trade;
-              const newRowData = {
-                TradeID: details.tradeId,
-                OrderID: trade.product.id.productId,
-                ExecutedPrice: details.executedPrice,
-                ExecutingVenue: details.executingVenue,
-                ExecutedAmount: details.executedAmount,
-                ExecutedBroker: details.executedBroker,
-                Account: details.account,
-                Manager: details.manager,
-                Trader: details.trader,
-                TradeDateTime: details.tradeDateTime,
-                SettlementDate: details.settlementDate,
-                Industry: details.industry,
-              };
-
-              await adaptableApi.gridApi.addGridData([newRowData]);
-              const rowHighlightInfo: RowHighlightInfo = {
-                primaryKeyValue: details.tradeId,
-                timeout: 5000,
-                highlightStyle: { BackColor: 'Yellow', ForeColor: 'Black' },
-              };
-
-              adaptableApi.gridApi.highlightRow(rowHighlightInfo);
-
-              // TODO: update order blotter status
-            }
-          },
-        },
-      },
       predefinedConfig: {
         Dashboard: {
           Revision,
