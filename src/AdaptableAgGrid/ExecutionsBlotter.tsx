@@ -16,7 +16,6 @@ import { agGridModules } from './agGridModules';
 import { renderReactRoot } from '../react-18-utils';
 import '@interopio/theme-demo-apps/dist/io.applications.css';
 import { Context, Trade } from '@finos/fdc3';
-import ExcelButton from './ExcelButton';
 import { useIOConnect } from '@interopio/react-hooks';
 
 interface TradeExtended extends Trade {
@@ -191,22 +190,6 @@ export const ExecutionsBlotter = () => {
     });
   });
 
-  const exportToExcel = () => {
-    const cols = adaptableApiRef.current?.columnApi.getColumns();
-    const rows = adaptableApiRef.current?.gridApi
-      .getAllRowNodes()
-      .map((row) => row.data);
-
-    if (!rows || !cols) {
-      return;
-    }
-
-    adaptableApiRef.current?.exportApi.exportDataToExcel(
-      { columns: cols, rows },
-      'Executions data',
-    );
-  };
-
   return (
     <div
       className={'flex h-screen flex-col'}
@@ -216,14 +199,6 @@ export const ExecutionsBlotter = () => {
         } as React.CSSProperties
       }
     >
-      <button
-        id="excel-export-button"
-        title="Export to Excel"
-        type="button"
-        onClick={exportToExcel}
-      >
-        <ExcelButton />
-      </button>
       <AdaptableReact
         className={'flex-none'}
         gridOptions={gridOptions}
