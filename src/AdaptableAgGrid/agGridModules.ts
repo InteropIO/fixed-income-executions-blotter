@@ -10,7 +10,6 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { GridChartsModule } from '@ag-grid-enterprise/charts';
 
 export const agGridModules: Module[] = [
@@ -22,7 +21,6 @@ export const agGridModules: Module[] = [
   MenuModule,
   RangeSelectionModule,
   RichSelectModule,
-  ExcelExportModule,
   GridChartsModule,
   SparklinesModule,
   RowGroupingModule,
